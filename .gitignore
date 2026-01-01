@@ -1,0 +1,17 @@
+# Runtime outputs
+backend/uploads/
+backend/results/
+backend/history.json
+
+# Model files
+*.pt
+*.onnx
+*.engine
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+frontend/node_modules/

@@ -1,0 +1,209 @@
+.history-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.5s ease-out;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.history-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.history-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.delete-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover:not(:disabled) {
+    background: var(--danger);
+    color: #fff;
+}
+
+.delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.download-btn {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-primary);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.download-btn:hover:not(:disabled) {
+    background: var(--accent-primary);
+    color: #fff;
+}
+
+.download-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.history-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-header {
+    display: grid;
+    grid-template-columns: 50px 100px 1.5fr 1.5fr 140px;
+    padding: 15px;
+    background: var(--bg-tertiary);
+    border-radius: 10px 10px 0 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: 50px 100px 1.5fr 1.5fr 140px;
+    padding: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.grid-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.grid-row.selected {
+    background: rgba(56, 189, 248, 0.05);
+}
+
+.col-select {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.col-preview img {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border);
+}
+
+.col-date {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.tag.littering {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.tag.smoke {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.no-violation {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.col-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.view-btn {
+    background: transparent;
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.view-btn:hover {
+    background: var(--accent-primary);
+    color: #fff;
+}
+
+.icon-btn {
+    background: transparent;
+    border: 1px solid var(--text-secondary);
+    color: var(--text-secondary);
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.history-empty {
+    text-align: center;
+    padding: 50px;
+    color: var(--text-secondary);
+}
