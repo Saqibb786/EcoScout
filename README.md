@@ -108,4 +108,4 @@ This project is an **academic prototype** developed for research and educational
 
 ---
 
-*EcoScout © 2024 - Protecting Our Environment Through Technology*
+*EcoScout © 2025 - Protecting Our Environment Through Technology*
