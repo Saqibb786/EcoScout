@@ -61,6 +61,12 @@ const Results = ({ results }) => {
                                     </div>
 
                                     <div className="card-details">
+                                        {det.frame_image_url && (
+                                            <div className="detection-frame">
+                                                <img src={det.frame_image_url} alt="Detection Frame" />
+                                            </div>
+                                        )}
+
                                         {det.license_plate !== "N/A" && (
                                             <div className="plate-info">
                                                 <Car size={16} />

@@ -32,3 +32,7 @@ def delete_records(ids):
 
 def get_all_records():
     return load_history()
+
+def get_records_by_ids(ids):
+    history = load_history()
+    return [r for r in history if r.get("id") in ids]

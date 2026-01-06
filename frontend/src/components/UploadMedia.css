@@ -1,76 +1,69 @@
+/* Upload Container */
 .upload-container {
-    background: var(--bg-secondary);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
     padding: 40px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
     max-width: 800px;
     margin: 0 auto;
-    animation: slideUp 0.5s ease-out;
+    animation: slideUpFade var(--duration-normal) var(--ease-out-expo);
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* Drop Zone */
 .drop-zone {
-    border: 2px dashed var(--bg-tertiary);
-    border-radius: 16px;
+    border: 2px dashed var(--border-medium);
+    border-radius: var(--radius-lg);
     padding: 60px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out-expo);
     position: relative;
-    min-height: 300px;
+    min-height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--bg-surface);
     cursor: pointer;
-    background: rgba(15, 23, 42, 0.3);
+    overflow: hidden;
 }
 
 .drop-zone:hover {
     border-color: var(--accent-primary);
-    background: rgba(56, 189, 248, 0.05);
-    transform: scale(1.01);
+    background: var(--accent-surface);
+    transform: scale(1.005);
 }
 
 .drop-zone.has-file {
     border-style: solid;
     border-color: var(--accent-primary);
-    padding: 20px;
+    background: var(--bg-panel);
     cursor: default;
-    background: rgba(15, 23, 42, 0.5);
+    transform: none;
 }
 
+/* Prompt Content */
 .upload-prompt {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
-    color: var(--text-secondary);
+    gap: 16px;
+    color: var(--text-tertiary);
+    pointer-events: none;
+    /* Let clicks pass to file input wrapper */
 }
 
 .upload-icon {
-    color: var(--accent-primary);
-    margin-bottom: 10px;
-    filter: drop-shadow(0 0 10px var(--accent-glow));
-    transition: transform 0.3s ease;
+    color: var(--text-tertiary);
+    transition: all var(--duration-normal) var(--ease-elastic-1);
 }
 
 .drop-zone:hover .upload-icon {
-    transform: translateY(-5px);
+    color: var(--accent-primary);
+    transform: scale(1.1) translateY(-8px);
 }
 
 .upload-prompt h3 {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     color: var(--text-primary);
     margin: 0;
 }
@@ -85,15 +78,23 @@
     cursor: pointer;
 }
 
+/* File Preview */
+.file-preview {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .preview-content {
-    margin-bottom: 20px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     max-height: 400px;
     display: flex;
     justify-content: center;
-    background: #000;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    background: var(--bg-app);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
 }
 
 .image-preview {
@@ -102,66 +103,110 @@
     object-fit: contain;
 }
 
+.video-placeholder {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-secondary);
+}
+
+/* File Info Bar */
 .file-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--bg-tertiary);
-    padding: 15px 20px;
-    border-radius: 10px;
-    border: 1px solid var(--glass-border);
+    background: var(--bg-surface);
+    padding: 16px 24px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
 }
 
 .file-name {
     font-weight: 500;
     color: var(--text-primary);
+    font-family: monospace;
 }
 
 .remove-btn {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    color: var(--danger);
+    background: transparent;
+    border: 1px solid var(--border-medium);
+    color: var(--text-tertiary);
     cursor: pointer;
     padding: 8px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all var(--duration-fast);
 }
 
 .remove-btn:hover {
-    background: var(--danger);
-    color: #fff;
+    background: var(--status-danger-bg);
+    border-color: var(--status-danger);
+    color: var(--status-danger);
 }
 
+/* Actions */
 .upload-actions {
-    margin-top: 30px;
+    margin-top: 32px;
     display: flex;
     justify-content: flex-end;
 }
 
 .upload-btn {
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    background: var(--accent-primary);
     color: #fff;
     border: none;
-    padding: 14px 32px;
-    border-radius: 10px;
+    padding: 14px 40px;
+    border-radius: var(--radius-full);
     font-weight: 600;
     font-size: 1rem;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px var(--accent-glow);
+    transition: all var(--duration-fast) var(--ease-out-expo);
+    box-shadow: var(--shadow-md);
 }
 
 .upload-btn:hover:not(:disabled) {
+    background: var(--accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px var(--accent-glow);
+    box-shadow: var(--shadow-lg);
+}
+
+.upload-btn:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .upload-btn:disabled {
-    background: var(--bg-tertiary);
-    color: var(--text-secondary);
-    box-shadow: none;
+    background: var(--bg-surface);
+    color: var(--text-tertiary);
     cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Error Message */
+.error-message {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--status-danger);
+    background: var(--status-danger-bg);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .upload-container {
+        padding: 24px;
+    }
+
+    .drop-zone {
+        padding: 40px;
+        min-height: 240px;
+    }
 }

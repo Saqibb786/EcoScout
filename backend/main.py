@@ -81,7 +81,16 @@ async def upload_media(file: UploadFile = File(...)):
             # Output video writer
             output_video_filename = f"annotated_{filename}"
             output_video_path = os.path.join(RESULTS_DIR, output_video_filename)
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v') # or 'avc1'
+            # Use 'avc1' for H.264 which is web-friendly. Fallback to 'mp4v' if needed.
+            # Note: OpenCV requires openh264-1.8.0-win64.dll or similar for avc1 on Windows sometimes.
+            # If 'avc1' fails, it might fall back or error. 'mp4v' is safer but less compatible with some browsers.
+            # Let's try 'mp4v' but ensure the container is .mp4. 
+            # Actually, standard browsers support H.264 (avc1). 
+            try:
+                fourcc = cv2.VideoWriter_fourcc(*'avc1')
+            except:
+                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                
             out = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
             
             all_detections = []
@@ -93,32 +102,45 @@ async def upload_media(file: UploadFile = File(...)):
                 if not ret:
                     break
                 
-                # Process specific frames
+                # Check if we should process this frame
                 if frame_count % process_every_n_frames == 0:
-                    # Run inference on the frame (pass frame directly)
-                    # We don't save individual frame images to disk to save space/time
-                    # unless debugging is needed.
                     detections = run_inference(frame, output_path=None)
                     
-                    # Add timestamp/frame info to detections
-                    for d in detections:
-                        d['frame'] = frame_count
-                        d['timestamp'] = frame_count / fps
-                        all_detections.append(d)
+                    # If this frame has relevant detections, save it
+                    if detections:
+                        frame_img_name = f"frame_{file_id}_{frame_count}.jpg"
+                        frame_img_path = os.path.join(RESULTS_DIR, frame_img_name)
+                        # Save the frame *with annotations*? Or raw?
+                        # Usually user wants to see the evidence. 
+                        # run_inference returns pure records without modifying the frame in-place (mostly).
+                        # Let's verify run_inference side effects.
+                        # It draws on 'img' which is a copy in the function, but doesn't return it.
+                        # So 'frame' here is clean.
+                        # We should draw on a copy for the saved image.
                         
-                    # Draw annotations on the frame for the video
-                    # Note: run_inference draws on the image passed to it if we modified it to do so inplace
-                    # or returned the annotated image.
-                    # Our modified run_inference draws on 'img' which is a copy or the original.
-                    # Let's adjust run_inference to return the annotated image or we just re-draw here?
-                    # Actually, the modified run_inference draws on the input image if it's an array?
-                    # Wait, "img = image_input.copy()" in my proposed change.
-                    # So we need to get that annotated image back if we want to write it to video.
-                    
-                    # Let's slightly adjust the logic.
-                    # Since run_inference returns records, we can re-draw or better yet, 
-                    # let's just use the detections to draw on the current frame for the video output.
-                    
+                        evidence_frame = frame.copy()
+                        for d in detections:
+                            bbox = d['bbox']
+                            label = d['violation_type']
+                            conf = d['confidence']
+                            color = (0, 255, 0)
+                            if label.lower() in ['littering', 'smoke']:
+                                color = (0, 0, 255)
+                            cv2.rectangle(evidence_frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), color, 2)
+                            cv2.putText(evidence_frame, f"{label} {conf}", (bbox[0], bbox[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                            if d.get('license_plate') != "N/A":
+                                 cv2.putText(evidence_frame, f"Plate: {d['license_plate']}", (bbox[0], bbox[3]+20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
+                                 
+                        cv2.imwrite(frame_img_path, evidence_frame)
+                        
+                        # Add frame info to detections
+                        for d in detections:
+                            d['frame'] = frame_count
+                            d['timestamp'] = frame_count / fps
+                            d['frame_image_url'] = f"http://localhost:8000/results/{frame_img_name}"
+                            all_detections.append(d)
+                        
+                    # Also draw on the video frame (which is used for the video file)
                     for d in detections:
                         bbox = d['bbox']
                         label = d['violation_type']
@@ -167,8 +189,37 @@ async def get_history():
 
 @app.delete("/history")
 async def delete_history(ids: list[str] = Body(...)):
+    # 1. Get the records to be deleted
+    records = history_manager.get_records_by_ids(ids)
+    
+    # 2. Delete the physical files
+    deleted_files_count = 0
+    for record in records:
+        try:
+            # Delete original uploaded file
+            original_filename = record.get("original_file")
+            if original_filename:
+                original_path = os.path.join(UPLOAD_DIR, original_filename)
+                if os.path.exists(original_path):
+                    os.remove(original_path)
+                    deleted_files_count += 1
+
+            # Delete annotated image/video
+            annotated_url = record.get("annotated_image_url") or record.get("annotated_video_url")
+            if annotated_url:
+                # Extract filename from URL (http://localhost:8000/results/filename)
+                annotated_filename = annotated_url.split("/")[-1]
+                annotated_path = os.path.join(RESULTS_DIR, annotated_filename)
+                if os.path.exists(annotated_path):
+                    os.remove(annotated_path)
+                    deleted_files_count += 1
+                    
+        except Exception as e:
+            print(f"Error deleting files for record {record.get('id')}: {e}")
+
+    # 3. Delete from history JSON
     count = history_manager.delete_records(ids)
-    return {"message": f"Deleted {count} records"}
+    return {"message": f"Deleted {count} records and {deleted_files_count} files"}
 
 @app.get("/report/{id}")
 async def get_report(id: str):

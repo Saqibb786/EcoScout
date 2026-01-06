@@ -91,6 +91,7 @@ const UploadMedia = ({ onUploadSuccess }) => {
                 className={`drop-zone ${file ? 'has-file' : ''}`}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
             >
                 {!file ? (
                     <div className="upload-prompt">
@@ -103,6 +104,8 @@ const UploadMedia = ({ onUploadSuccess }) => {
                             onChange={handleFileChange}
                             accept="image/*,video/*"
                             className="file-input"
+                            style={{ display: 'none' }}
+                            onClick={(e) => e.stopPropagation()}
                         />
                     </div>
                 ) : (
